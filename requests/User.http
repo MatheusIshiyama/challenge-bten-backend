@@ -1,14 +1,14 @@
 ### GET USERS
-GET http://localhost:3010/api/user
+GET http://localhost:3010/api/users
 
 ### GET USER
-GET http://localhost:3010/api/user/1
+GET http://localhost:3010/api/users/1
 
 ### DELETE USER
-DELETE http://localhost:3010/api/user/1
+DELETE http://localhost:3010/api/users/2
 
 ### ADD USER
-POST http://localhost:3010/api/user
+POST http://localhost:3010/api/users
 content-type: application/json
 
 {
@@ -19,7 +19,7 @@ content-type: application/json
 }
 
 ### UPDATE USER
-PUT http://localhost:3010/api/user/1
+PUT http://localhost:3010/api/users/1
 content-type: application/json
 
 {

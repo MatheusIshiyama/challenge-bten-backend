@@ -1,10 +1,11 @@
-import { getRepository, Repository } from 'typeorm';
-import { User } from '@models/User';
+import { getConnection, Connection, getRepository, Repository, QueryRunner } from "typeorm";
+import { User } from "@models/User";
+import { IUser } from "./../interfaces";
 
 class UserService {
   async getUsers() {
     const userRepository: Repository<User> = getRepository(User);
-    const users: User[] = await userRepository.find();
+    const users: User[] = await userRepository.find({ order: { id: "ASC" } });
 
     return users;
   }
@@ -14,6 +15,81 @@ class UserService {
     const user: User = await userRepository.findOne(userId);
 
     return user;
+  }
+
+  async addUser(userData: IUser) {
+    const connection: Connection = getConnection();
+    const queryRunner: QueryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction();
+
+    try {
+      const userRepository: Repository<User> = getRepository(User);
+      const user: User = userRepository.create(userData);
+
+      await queryRunner.manager.save(user);
+
+      await queryRunner.commitTransaction();
+
+      return user;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    }
+  }
+
+  async updateUser(userId: string, { name, homeTeam, age, height }: IUser) {
+    const connection: Connection = getConnection();
+    const queryRunner: QueryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction();
+
+    try {
+      const userRepository: Repository<User> = getRepository(User);
+      const userEntity = new User();
+
+      userEntity.name = name;
+      userEntity.homeTeam = homeTeam;
+      userEntity.age = age;
+      userEntity.height = height;
+
+      await userRepository.update(userId, userEntity);
+
+      await queryRunner.commitTransaction();
+
+      const user: User = await this.getUser(userId);
+
+      return user;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    }
+  }
+
+  async deleteUser(userId: string) {
+    const connection: Connection = getConnection();
+    const queryRunner: QueryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction();
+    try {
+      const userRepository: Repository<User> = getRepository(User);
+
+      await userRepository.delete(userId);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    }
   }
 }
 

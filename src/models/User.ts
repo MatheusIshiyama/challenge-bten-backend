@@ -1,33 +1,34 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-@Entity({ name: 'users' })
+@Entity({ name: "users" })
 export class User {
   @PrimaryGeneratedColumn()
-	id: number;
+  id: number;
 
-  @Column('varchar', {
-    name: 'home_team',
+  @Column("varchar", {
+    name: "home_team",
     nullable: true,
   })
   homeTeam: string;
 
-  @Column('varchar')
+  @Column("varchar")
   name: string;
 
-  @Column('int')
+  @Column("int")
   age: number;
 
-  @Column('double precision')
+  @Column("double precision")
   height: number;
 
-  @Column('timestamp', {
-    default: 'NOW()',
-  })
-	createdAt: Date;
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
 
-  @Column('timestamp', {
-    onUpdate: 'NOW()',
-    nullable: true,
-  })
-	updatedAt: Date;
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }
