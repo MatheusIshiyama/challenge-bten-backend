@@ -98,6 +98,39 @@ class UserController {
       return res.status(500).json({ error: error.message });
     }
   }
+
+  async signIn(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password)
+        return res.status(400).json({ error: "Email or password is missing" });
+
+      const token: string | null = await UserService.signIn(email, password);
+
+      if (!token) return res.status(404).json({ error: "Invalid email or password" });
+
+      return res.status(200).json({ token });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getProfile(req: Request, res: Response) {
+    try {
+      const { authorization } = req.headers;
+
+      if (!authorization) return res.status(400).json({ error: "Authorization not provided" });
+
+      const user: User = await UserService.getProfile(authorization);
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default new UserController();

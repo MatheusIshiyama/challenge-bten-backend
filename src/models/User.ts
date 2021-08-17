@@ -48,7 +48,6 @@ export class User {
   }
 
   async comparePassword(password: string) {
-    console.log(this.password, password);
     const isEquals = await compare(password, this.password);
 
     return isEquals;

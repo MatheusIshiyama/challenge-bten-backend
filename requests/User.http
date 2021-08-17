@@ -29,3 +29,17 @@ content-type: application/json
   "homeTeam": "Curintia",
   "password": "123"
 }
+
+### SIGN IN USER
+POST http://localhost:3010/api/users/signin
+content-type: application/json
+
+{
+  "email": "teste@teste.com",
+  "password": "123456"
+}
+
+### USER PROFILE
+GET http://localhost:3010/api/users/profile
+content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjI5MjQxMjIwfQ.zPAVLBjWFzCEnpPHDftPECg7Zs10LQGRT-dtQwsYQs4

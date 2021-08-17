@@ -1,6 +1,7 @@
 import { getConnection, Connection, getRepository, Repository, QueryRunner } from "typeorm";
 import { User } from "@models/User";
 import { IUser } from "./../interfaces";
+import { sign, verify } from "jsonwebtoken";
 
 class UserService {
   async getUsers() {
@@ -105,6 +106,51 @@ class UserService {
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
+      throw error;
+    }
+  }
+
+  async signIn(email: string, password: string) {
+    const connection: Connection = getConnection();
+    const queryRunner: QueryRunner = connection.createQueryRunner();
+
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction();
+    try {
+      const userRepository: Repository<User> = getRepository(User);
+
+      const user = await userRepository.findOne({ email });
+
+      if (!user) return null;
+
+      const isEquals = user.comparePassword(password);
+
+      if (!isEquals) return null;
+
+      const token = sign({ id: user.id }, process.env.JWT_TOKEN);
+
+      return token;
+    } catch (error) {
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    }
+  }
+
+  async getProfile(token: string) {
+    try {
+      const userRepository: Repository<User> = getRepository(User);
+
+      const payload = verify(token, process.env.JWT_TOKEN);
+
+      const user: User = await userRepository.findOne((<any>payload).id);
+
+      delete user.password;
+
+      return user;
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   }

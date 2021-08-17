@@ -9,6 +9,14 @@ router
   .get(UserController.getUsers);
 
 router
+  .route('/users/signin')
+  .post(UserController.signIn);
+
+router
+  .route('/users/profile')
+  .get(UserController.getProfile)
+
+router
   .route('/users/:userId')
   .get(UserController.getUser)
   .put(UserController.updateUser)
