@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
+import { compare, hash } from "bcrypt";
 
 @Entity({ name: "users" })
 export class User {
@@ -20,6 +23,12 @@ export class User {
   @Column("varchar")
   name: string;
 
+  @Column("varchar")
+  email: string;
+
+  @Column("varchar")
+  password: string;
+
   @Column("int")
   age: number;
 
@@ -31,4 +40,17 @@ export class User {
 
   @UpdateDateColumn({ type: "timestamp" })
   updatedAt: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) this.password = await hash(this.password, 10);
+  }
+
+  async comparePassword(password: string) {
+    console.log(this.password, password);
+    const isEquals = await compare(password, this.password);
+
+    return isEquals;
+  }
 }

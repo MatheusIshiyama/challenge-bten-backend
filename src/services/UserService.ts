@@ -5,7 +5,12 @@ import { IUser } from "./../interfaces";
 class UserService {
   async getUsers() {
     const userRepository: Repository<User> = getRepository(User);
-    const users: User[] = await userRepository.find({ order: { id: "ASC" } });
+    const usersData: User[] = await userRepository.find({ order: { id: "ASC" } });
+
+    const users = usersData.map((data) => {
+      delete data.password;
+      return data;
+    });
 
     return users;
   }
@@ -13,6 +18,8 @@ class UserService {
   async getUser(userId: string) {
     const userRepository: Repository<User> = getRepository(User);
     const user: User = await userRepository.findOne(userId);
+
+    delete user.password;
 
     return user;
   }
@@ -33,6 +40,8 @@ class UserService {
 
       await queryRunner.commitTransaction();
 
+      delete user.password;
+
       return user;
     } catch (error) {
       console.error(error);
@@ -41,7 +50,7 @@ class UserService {
     }
   }
 
-  async updateUser(userId: string, { name, homeTeam, age, height }: IUser) {
+  async updateUser(userId: string, { name, email, password, homeTeam, age, height }: IUser) {
     const connection: Connection = getConnection();
     const queryRunner: QueryRunner = connection.createQueryRunner();
 
@@ -54,15 +63,23 @@ class UserService {
       const userEntity = new User();
 
       userEntity.name = name;
+      userEntity.email = email;
       userEntity.homeTeam = homeTeam;
       userEntity.age = age;
       userEntity.height = height;
+
+      const userData = await userRepository.findOne(userId);
+      const isEquals = await userData.comparePassword(password);
+
+      if (!isEquals) userEntity.password = password;
 
       await userRepository.update(userId, userEntity);
 
       await queryRunner.commitTransaction();
 
       const user: User = await this.getUser(userId);
+
+      delete user.password;
 
       return user;
     } catch (error) {

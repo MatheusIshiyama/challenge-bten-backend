@@ -13,6 +13,8 @@ content-type: application/json
 
 {
   "name": "Rogerio Flausino",
+  "email": "teste@teste.com",
+  "password": "123456",
   "homeTeam": "Curintia",
   "age": "28",
   "height": "1.95"
@@ -24,5 +26,6 @@ content-type: application/json
 
 {
   "name": "Marcos",
-  "homeTeam": "Curintia"
+  "homeTeam": "Curintia",
+  "password": "123"
 }

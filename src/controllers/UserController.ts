@@ -30,9 +30,16 @@ class UserController {
 
   async addUser(req: Request, res: Response) {
     try {
-      const { name, homeTeam = null, age, height } = req.body;
+      const { name, email, password, homeTeam = null, age, height } = req.body;
 
-      const user: User = await UserService.addUser({ name, homeTeam, age, height });
+      const user: User = await UserService.addUser({
+        name,
+        email,
+        password,
+        homeTeam,
+        age,
+        height,
+      });
 
       return res.status(200).json(user);
     } catch (error) {
@@ -51,12 +58,21 @@ class UserController {
 
       const {
         name = userData.name,
+        email = userData.email,
+        password = userData.password,
         homeTeam = userData.homeTeam,
         age = userData.age,
         height = userData.height,
       } = req.body;
 
-      const user = await UserService.updateUser(userId, { name, homeTeam, age, height });
+      const user = await UserService.updateUser(userId, {
+        name,
+        email,
+        password,
+        homeTeam,
+        age,
+        height,
+      });
 
       return res.status(200).json(user);
     } catch (error) {
