@@ -7,10 +7,18 @@ Finalizar o microserviço utilizando node.js, com os seguintes requisitos:
 - API para realizar Login
 - API para CRUD de usuário
 
-## Iniciando Serviço:
+## Preparação de ambiente:
+
+configurar arquivo .env e rodar
 
 ```sh
 yarn
+yarn migration
+```
+
+## Iniciando Serviço:
+
+```sh
 yarn dev
 ```
 
